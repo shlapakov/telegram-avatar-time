@@ -1,8 +1,9 @@
 import time
 from telethon import TelegramClient
 from telethon.tl.functions.photos import UploadProfilePhotoRequest, DeletePhotosRequest
+from telethon.tl.functions.account import UpdateProfileRequest
 from config import api_hash, api_id
-from utils import time_has_changed, generate_time_image_bytes
+from utils import time_has_changed, generate_time_image_bytes, generate_text
 from datetime import datetime, timedelta
 import argparse
 import pytz
@@ -19,7 +20,7 @@ def valid_tz(s):
 parser = argparse.ArgumentParser()
 parser.add_argument("--api_id", required=False, help="user api ID", type=str, default=api_id)
 parser.add_argument("--api_hash", required=False, help="user api Hash", type=str, default=api_hash)
-parser.add_argument("--tz", required=False,  help="user api Hash", type=valid_tz, default=valid_tz('Asia/Tashkent'))
+parser.add_argument("--tz", required=False,  help="user api Hash", type=valid_tz, default=valid_tz('Europe/Minsk'))
 
 args = parser.parse_args()
 
@@ -36,6 +37,9 @@ async def main():
             await client(DeletePhotosRequest(await client.get_profile_photos('me')))
             file = await client.upload_file(bts)
             await client(UploadProfilePhotoRequest(file))
+            await client(UpdateProfileRequest(
+                about=generate_text(datetime.now(args.tz).replace(tzinfo=None))
+            ))
             prev_update_time = datetime.now()
             time.sleep(1)
             
