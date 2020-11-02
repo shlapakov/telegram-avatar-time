@@ -22,3 +22,9 @@ def generate_time_image_bytes(dt):
     cv2.putText(image, text, (int(image.shape[0]*0.35), int(image.shape[1]*0.5)), font, 1.5, (255, 255, 0), 2, cv2.LINE_AA)
     _, bts = cv2.imencode('.jpg', image)
     return bts.tobytes()
+
+def generate_text(dt):
+    date = convert_time_to_string(dt)
+    persents = round((dt.hour * 60 + dt.minute) / 1440 * 100, 2)
+    bar = f'│{"█"*int(persents//5)}{"─" * (20 - int(persents // 5))}│{persents}%'
+    return f'{date} Day progress:\n{bar}'
